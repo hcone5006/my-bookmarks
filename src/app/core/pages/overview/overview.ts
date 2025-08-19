@@ -43,14 +43,21 @@ export class Overview {
     }
   }
 
-  handleSubmit(addedUrl: string) {
+
+  checkUrlWorks(testUrl: any): boolean {
+    const isUrlCorrect = new URL(testUrl);
+    console.log(isUrlCorrect)
+    return isUrlCorrect.protocol === 'http:' || isUrlCorrect.protocol === 'https:';
+  } 
+
+  async handleSubmit(addedUrl: string) {
     let myuuid = uuidv4();
     this.newUrl.set({ url: addedUrl, id: myuuid });
     let currentList = [...this.urlList()];
 
-    let checkUrlExists = currentList.some((obj) => obj.url === addedUrl);
-    if (addedUrl) {
-      if (checkUrlExists) {
+    let checkUrlPreviouslyAdded = currentList.some((obj) => obj.url === addedUrl);
+    if (addedUrl && this.checkUrlWorks(addedUrl)) {
+      if (checkUrlPreviouslyAdded) {
         console.log('url already exists');
         this.urlAlreadyExists.set(true);
         return;
