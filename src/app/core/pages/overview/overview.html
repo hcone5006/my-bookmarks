@@ -1,10 +1,12 @@
 <app-layout>
   <h1>Overview</h1>
 
+  <!-- Form field for adding fav url -->
   <app-form-wrapper>
     <app-form (currentURLEvent)="handleSubmit($event)" />
   </app-form-wrapper>
 
+  <!-- list of fav links -->
   <div class="list-wrapper">
     <h2>My favorite links</h2>
     <ul>
@@ -21,5 +23,6 @@
       <li>No items to display.</li>
       }
     </ul>
+    <!-- todo: add pagination -->
   </div>
 </app-layout>

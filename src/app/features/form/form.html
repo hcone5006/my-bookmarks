@@ -2,11 +2,13 @@
   <mat-form-field [style.width.%]="100">
     <mat-label for="fav-url">URL</mat-label>
     <input id="fav-url" matInput type="text" formControlName="favUrl" />
+    <!-- using Angular form's built-in validation handling using custom regex pattern, display error message -->
     @if (favUrlForm.get('favUrl')?.invalid && favUrlForm.get('favUrl')?.touched) {
     <mat-error>{{ errorMessage() }}</mat-error>
     }
   </mat-form-field>
 
+  <!-- button disabled until form field value is valid following regex patterns -->
   <button type="submit" matButton="elevated" [disabled]="!favUrlForm.valid" class="submit-btn">
     Submit
   </button>

@@ -14,7 +14,7 @@ import { MatIconModule } from '@angular/material/icon';
 export class Results {
   updatedUrl?: urlListItem;
   private urlListService = inject(UrlListService);
-  newUrl = this.urlListService.getNewUrl();
+  newUrl = this.urlListService.getNewUrl(); // get url from service, which is getting it from localStorage
 
   ngOnInit(): void {
     this.updatedUrl = this.urlListService.getNewUrl();

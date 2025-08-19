@@ -3,6 +3,9 @@ import { Injectable } from '@angular/core';
 @Injectable({
   providedIn: 'root',
 })
+
+// Service to manage URL list items and new URL
+// This service handles the URL list and the new URL being added, including saving to and loading localStorage
 export class UrlListService {
   public urlList: { url: string; id: string }[] = [];
   public newUrl: { url: string; id: string } = { url: '', id: '' };

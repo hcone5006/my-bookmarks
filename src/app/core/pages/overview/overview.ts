@@ -24,56 +24,38 @@ export interface urlListItem {
 })
 export class Overview {
   newUrl = signal<urlListItem>({ url: '', id: '' });
-  urlList: WritableSignal<urlListItem[]> = signal([]);
-  urlAlreadyExists = signal(false);
-  private urlListService = inject(UrlListService);
+  urlList: WritableSignal<urlListItem[]> = signal([]); //urlList needs to be writable, create an empty array
+  urlAlreadyExists = signal(false); // Set value to check if url was previously added
+  private urlListService = inject(UrlListService); // Inject service to access urlList and newUrl
 
   constructor(private router: Router) {}
 
   ngOnInit() {
-    // this.loadState();
-    this.urlListService.loadState();
-    this.urlListService.getUrlList().forEach((item) => {
+    this.urlListService.loadState(); // if list has items, load them on init
+    this.urlListService.getUrlList().forEach((item) => { // Populate urlList if there are items saved in localStorage
       this.urlList.update((list) => [...list, item]);
     });
-    // this.urlListService.getUrlList().forEach((item))
-    // this.urlListService.getNewUrl();
-    // this.urlListService.urlList = this.urlList();
-    // this.urlListService.newUrl = this.newUrl();
   }
 
-  // loadState() {
-  //   const savedList = localStorage.getItem('urlList');
-  //   const savedListItem = localStorage.getItem('newUrl');
-  //   if (savedList) {
-  //     this.urlList.set(JSON.parse(savedList));
-  //   }
-  //   if (savedListItem) {
-  //     this.newUrl.set(JSON.parse(savedListItem));
-  //   }
-  // }
-
+  // Test url is valid by checking protocol is valud and if HEAD can be fetched
   async checkUrlWorks(testUrl: any): Promise<boolean> {
     try {
       const url = new URL(testUrl);
-      // Basic format validation, bit of a double-up with the built in Angular forms regex validation
       if (url.protocol !== 'http:' && url.protocol !== 'https:') {
         return false;
       }
-      // Basic fetch test with HEAD request
       const response = await fetch(url.href, {
         method: 'HEAD',
-        mode: 'no-cors', //Bypass CORS but we won't get status code
+        mode: 'no-cors',
       });
-      // If we reach here without error, URL is likely valid
       return true;
     } catch (error) {
-      // URL parsing failed or network error
       console.log('URL validation failed:', error);
       return false;
     }
   }
 
+  // Handle form submission... add new url and update the list, save to localStorage
   async handleSubmit(addedUrl: string) {
     let myuuid = uuidv4();
     this.newUrl.set({ url: addedUrl, id: myuuid });
@@ -100,6 +82,7 @@ export class Overview {
     }
   }
 
+  // Delete url from list and update list in localStorage
   deleteUrl(id: string): void {
     console.log('id: ', id);
     let currentList = [...this.urlList()];
