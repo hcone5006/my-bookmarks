@@ -17,7 +17,15 @@ export interface urlListItem {
 
 @Component({
   selector: 'app-overview',
-  imports: [Layout, FormWrapper, Form, MatListModule, MatButtonModule, MatIconModule, MatPaginatorModule],
+  imports: [
+    Layout,
+    FormWrapper,
+    Form,
+    MatListModule,
+    MatButtonModule,
+    MatIconModule,
+    MatPaginatorModule,
+  ],
   templateUrl: './overview.html',
   styleUrl: './overview.scss',
 })
@@ -29,8 +37,9 @@ export class Overview {
   numberOfUrls = signal(0); // Signal to track number of URLs
   pageIndex = signal(0); // Current page index for pagination
   pageSize = signal(20); // Number of items per page for pagination
-  
+
   // Set up computed signal that will show correct paginated items
+  // todo: consider saving pagesize to localstorage so if the user changes the page size, it persists when they come back to the Overview page
   paginatedUrls = computed(() => {
     const startIndex = this.pageIndex() * this.pageSize();
     const endIndex = startIndex + this.pageSize();
@@ -41,7 +50,8 @@ export class Overview {
 
   ngOnInit() {
     this.urlListService.loadState(); // if list has items, load them on init
-    this.urlListService.getUrlList().forEach((item) => { // Populate urlList if there are items saved in localStorage
+    this.urlListService.getUrlList().forEach((item) => {
+      // Populate urlList if there are items saved in localStorage
       this.urlList.update((list) => [...list, item]);
     });
 
@@ -97,7 +107,7 @@ export class Overview {
       } else {
         currentList.push(this.newUrl());
         this.urlList.set([...currentList]);
-        
+
         this.updateUrlListService(); // update service with new url and list
         this.setNumberOfUrls(); // update total number of urls for paginator
         this.router.navigate(['/results']); // navigate to results page upon successful submission

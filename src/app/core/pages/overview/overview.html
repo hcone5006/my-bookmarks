@@ -25,13 +25,13 @@
       }
     </ul>
     <!-- pagination set to show 20 list items at a time -->
-    <mat-paginator 
+    <mat-paginator
       [length]="numberOfUrls()"
       [pageSize]="20"
       [pageSizeOptions]="[5, 10, 20, 100]"
       aria-label="Select page"
       (page)="onPageChange($event)"
-      >
+    >
     </mat-paginator>
   </div>
 </app-layout>
