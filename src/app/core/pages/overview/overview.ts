@@ -1,4 +1,4 @@
-import { Component, inject, signal, WritableSignal } from '@angular/core';
+import { Component, inject, signal, WritableSignal, computed } from '@angular/core';
 import { Layout } from '@core/layout/layout';
 import { FormWrapper } from '@shared/form-wrapper/form-wrapper';
 import { Form } from '@features/form/form';
@@ -8,8 +8,6 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { UrlListService } from '@shared/services/urllistitem/urllistitem';
 import { Router } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
-import { catchError, of } from 'rxjs';
 import { MatPaginatorModule } from '@angular/material/paginator';
 
 export interface urlListItem {
@@ -29,6 +27,15 @@ export class Overview {
   urlAlreadyExists = signal(false); // Set value to check if url was previously added
   private urlListService = inject(UrlListService); // Inject service to access urlList and newUrl
   numberOfUrls = signal(0); // Signal to track number of URLs
+  pageIndex = signal(0); // Current page index for pagination
+  pageSize = signal(20); // Number of items per page for pagination
+  
+  // Set up computed signal that will show correct paginated items
+  paginatedUrls = computed(() => {
+    const startIndex = this.pageIndex() * this.pageSize();
+    const endIndex = startIndex + this.pageSize();
+    return this.urlList().slice(startIndex, endIndex);
+  });
 
   constructor(private router: Router) {}
 
@@ -106,5 +113,11 @@ export class Overview {
       currentList = currentList.filter((item) => item.id !== id);
       this.urlList.set([...currentList]);
     }
+  }
+
+  // Handle page change event from paginator
+  onPageChange(event: any): void {
+    this.pageIndex.set(event.pageIndex);
+    this.pageSize.set(event.pageSize);
   }
 }
