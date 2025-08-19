@@ -8,6 +8,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { UrlListService } from '@shared/services/urllistitem/urllistitem';
 import { Router } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
+import { catchError, of } from 'rxjs';
 
 export interface urlListItem {
   url: string;
@@ -43,12 +45,26 @@ export class Overview {
     }
   }
 
-
-  checkUrlWorks(testUrl: any): boolean {
-    const isUrlCorrect = new URL(testUrl);
-    console.log(isUrlCorrect)
-    return isUrlCorrect.protocol === 'http:' || isUrlCorrect.protocol === 'https:';
-  } 
+  async checkUrlWorks(testUrl: any): Promise<boolean> {
+    try {
+      const url = new URL(testUrl);
+      // Basic format validation, bit of a double-up with the built in Angular forms regex validation
+      if (url.protocol !== 'http:' && url.protocol !== 'https:') {
+        return false;
+      }
+      // Basic fetch test with HEAD request
+      const response = await fetch(url.href, {
+        method: 'HEAD',
+        mode: 'no-cors', //Bypass CORS but we won't get status code
+      });
+      // If we reach here without error, URL is likely valid
+      return true;
+    } catch (error) {
+      // URL parsing failed or network error
+      console.log('URL validation failed:', error);
+      return false;
+    }
+  }
 
   async handleSubmit(addedUrl: string) {
     let myuuid = uuidv4();
@@ -56,7 +72,7 @@ export class Overview {
     let currentList = [...this.urlList()];
 
     let checkUrlPreviouslyAdded = currentList.some((obj) => obj.url === addedUrl);
-    if (addedUrl && this.checkUrlWorks(addedUrl)) {
+    if (addedUrl && (await this.checkUrlWorks(addedUrl))) {
       if (checkUrlPreviouslyAdded) {
         console.log('url already exists');
         this.urlAlreadyExists.set(true);
