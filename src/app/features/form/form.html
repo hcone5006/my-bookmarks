@@ -1,5 +1,5 @@
 <form [formGroup]="favUrlForm" (ngSubmit)="onSubmit()">
-  <mat-form-field>
+  <mat-form-field [style.width.%]="100">
     <mat-label for="fav-url">URL</mat-label>
     <input id="fav-url" matInput type="text" formControlName="favUrl">
     @if (favUrlForm.get('favUrl')?.invalid && favUrlForm.get('favUrl')?.touched) {
@@ -7,7 +7,5 @@
     }
   </mat-form-field>
 
-   <button type="submit" matButton="elevated" [disabled]="!favUrlForm.valid">Submit</button>
+   <button type="submit" matButton="elevated" [disabled]="!favUrlForm.valid" class="submit-btn">Submit</button>
 </form>
-
-<!-- <p>Value: {{ favUrlForm.value }}</p> -->

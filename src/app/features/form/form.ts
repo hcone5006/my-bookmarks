@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, output, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -12,11 +12,12 @@ import { merge } from 'rxjs';
   styleUrl: './form.scss'
 })
 export class Form {
-  // favUrl = new FormControl('');
   errorMessage = signal('');
 
+  currentURLEvent = output<string>();
+
   favUrlForm = new FormGroup({
-    favUrl: new FormControl('', [Validators.required, Validators.pattern('https?://.+')]),
+    favUrl: new FormControl('', [Validators.required, Validators.pattern('(https?://)?([\\da-z.-]+)\\.([a-z.]{2,6})[/\\w .-]*/?')]),
   });
 
   constructor() {
@@ -29,7 +30,7 @@ export class Form {
         if (favUrlControl.hasError('required')) {
           this.errorMessage.set('URL is required');
         } else if (favUrlControl.hasError('pattern')) {
-          this.errorMessage.set('Please enter a valid URL starting with http:// or https://');
+          this.errorMessage.set('Please enter a valid URL starting with http:// or https:// and including the domain name.');
         } else {
           this.errorMessage.set('');
         }
@@ -38,7 +39,11 @@ export class Form {
   }
 
   onSubmit() {
-    // TODO: Use EventEmitter with form value
     console.log(this.favUrlForm.value);
+    
+    if(this.favUrlForm.valid) {
+      this.currentURLEvent.emit(this.favUrlForm.get('favUrl')?.value || '');
+    }
+    
   }
 }

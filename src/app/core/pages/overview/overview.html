@@ -2,7 +2,7 @@
   <h1>Overview</h1>
 
   <app-form-wrapper>
-   <app-form />
+   <app-form (currentURLEvent)="handleSubmit($event)"/>
   </app-form-wrapper>
 
 </app-layout>
