@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Layout } from '../../layout/layout';
+import { Layout } from '@core/layout/layout';
 
 @Component({
   selector: 'app-results',

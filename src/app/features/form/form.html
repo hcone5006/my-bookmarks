@@ -1,0 +1,13 @@
+<form [formGroup]="favUrlForm" (ngSubmit)="onSubmit()">
+  <mat-form-field>
+    <mat-label for="fav-url">URL</mat-label>
+    <input id="fav-url" matInput type="text" formControlName="favUrl">
+    @if (favUrlForm.get('favUrl')?.invalid && favUrlForm.get('favUrl')?.touched) {
+      <mat-error>{{errorMessage()}}</mat-error>
+    }
+  </mat-form-field>
+
+   <button type="submit" matButton="elevated" [disabled]="!favUrlForm.valid">Submit</button>
+</form>
+
+<!-- <p>Value: {{ favUrlForm.value }}</p> -->
