@@ -31,19 +31,27 @@ export class Overview {
   constructor(private router: Router) {}
 
   ngOnInit() {
-    this.loadState();
+    // this.loadState();
+    this.urlListService.loadState();
+    this.urlListService.getUrlList().forEach((item) => {
+      this.urlList.update((list) => [...list, item]);
+    });
+    // this.urlListService.getUrlList().forEach((item))
+    // this.urlListService.getNewUrl();
+    // this.urlListService.urlList = this.urlList();
+    // this.urlListService.newUrl = this.newUrl();
   }
 
-  loadState() {
-    const savedList = localStorage.getItem('urlList');
-    const savedListItem = localStorage.getItem('newUrl');
-    if (savedList) {
-      this.urlList.set(JSON.parse(savedList));
-    }
-    if (savedListItem) {
-      this.newUrl.set(JSON.parse(savedListItem));
-    }
-  }
+  // loadState() {
+  //   const savedList = localStorage.getItem('urlList');
+  //   const savedListItem = localStorage.getItem('newUrl');
+  //   if (savedList) {
+  //     this.urlList.set(JSON.parse(savedList));
+  //   }
+  //   if (savedListItem) {
+  //     this.newUrl.set(JSON.parse(savedListItem));
+  //   }
+  // }
 
   async checkUrlWorks(testUrl: any): Promise<boolean> {
     try {
