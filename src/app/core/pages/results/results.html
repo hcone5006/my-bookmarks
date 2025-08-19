@@ -1,3 +1,13 @@
 <app-layout>
   <h1>Results</h1>
+  <div class="results-wrapper">
+    <p class="contrast-font">
+      Looks great! Thank you for submitting your favorite url. Here are the results of your
+      submission:
+    </p>
+    <p>
+      <code>{{ updatedUrl?.url }}</code>
+    </p>
+    <a href="/" matButton><mat-icon>arrow_back</mat-icon>Take me back to the Overview page</a>
+  </div>
 </app-layout>

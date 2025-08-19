@@ -1,4 +1,4 @@
-import { Component, signal, WritableSignal } from '@angular/core';
+import { Component, inject, signal, WritableSignal } from '@angular/core';
 import { Layout } from '@core/layout/layout';
 import { FormWrapper } from '@shared/form-wrapper/form-wrapper';
 import { Form } from '@features/form/form';
@@ -6,8 +6,10 @@ import { v4 as uuidv4 } from 'uuid';
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { UrlListService } from '@shared/services/urllistitem/urllistitem';
+import { Router } from '@angular/router';
 
-interface urlListItem {
+export interface urlListItem {
   url: string;
   id: string;
 }
@@ -19,15 +21,32 @@ interface urlListItem {
   styleUrl: './overview.scss',
 })
 export class Overview {
-  childUrl = signal<urlListItem>({ url: '', id: '' });
+  newUrl = signal<urlListItem>({ url: '', id: '' });
   urlList: WritableSignal<urlListItem[]> = signal([]);
   urlAlreadyExists = signal(false);
+  private urlListService = inject(UrlListService);
+
+  constructor(private router: Router) {}
+
+  ngOnInit() {
+    this.loadState();
+  }
+
+  loadState() {
+    const savedList = localStorage.getItem('urlList');
+    const savedListItem = localStorage.getItem('newUrl');
+    if (savedList) {
+      this.urlList.set(JSON.parse(savedList));
+    }
+    if (savedListItem) {
+      this.newUrl.set(JSON.parse(savedListItem));
+    }
+  }
 
   handleSubmit(addedUrl: string) {
     let myuuid = uuidv4();
-    this.childUrl.set({ url: addedUrl, id: myuuid });
+    this.newUrl.set({ url: addedUrl, id: myuuid });
     let currentList = [...this.urlList()];
-    console.log('Child URL:', this.childUrl());
 
     let checkUrlExists = currentList.some((obj) => obj.url === addedUrl);
     if (addedUrl) {
@@ -36,9 +55,16 @@ export class Overview {
         this.urlAlreadyExists.set(true);
         return;
       } else {
-        currentList.push(this.childUrl());
+        currentList.push(this.newUrl());
         this.urlList.set([...currentList]);
+
+        this.urlListService.urlList = this.urlList();
+        this.urlListService.newUrl = this.newUrl();
+
+        localStorage.setItem('newUrl', JSON.stringify(this.newUrl()));
+        localStorage.setItem('urlList', JSON.stringify(this.urlList()));
         console.log('current list: ', this.urlList());
+        this.router.navigate(['/results']);
       }
     }
   }
