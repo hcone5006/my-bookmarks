@@ -6,8 +6,6 @@ import { RouterLink } from '@angular/router';
   selector: 'app-navbar',
   imports: [RouterLink, MatButtonModule],
   templateUrl: './navbar.html',
-  styleUrl: './navbar.scss'
+  styleUrl: './navbar.scss',
 })
-export class Navbar {
-
-}
+export class Navbar {}

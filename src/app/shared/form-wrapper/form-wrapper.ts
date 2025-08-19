@@ -4,8 +4,6 @@ import { Component } from '@angular/core';
   selector: 'app-form-wrapper',
   imports: [],
   templateUrl: './form-wrapper.html',
-  styleUrl: './form-wrapper.scss'
+  styleUrl: './form-wrapper.scss',
 })
-export class FormWrapper {
-  
-}
+export class FormWrapper {}

@@ -5,8 +5,6 @@ import { Layout } from '@core/layout/layout';
   selector: 'app-results',
   imports: [Layout],
   templateUrl: './results.html',
-  styleUrl: './results.scss'
+  styleUrl: './results.scss',
 })
-export class Results {
-
-}
+export class Results {}
