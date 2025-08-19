@@ -10,6 +10,7 @@ import { UrlListService } from '@shared/services/urllistitem/urllistitem';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { catchError, of } from 'rxjs';
+import { MatPaginatorModule } from '@angular/material/paginator';
 
 export interface urlListItem {
   url: string;
@@ -18,7 +19,7 @@ export interface urlListItem {
 
 @Component({
   selector: 'app-overview',
-  imports: [Layout, FormWrapper, Form, MatListModule, MatButtonModule, MatIconModule],
+  imports: [Layout, FormWrapper, Form, MatListModule, MatButtonModule, MatIconModule, MatPaginatorModule],
   templateUrl: './overview.html',
   styleUrl: './overview.scss',
 })
@@ -27,6 +28,7 @@ export class Overview {
   urlList: WritableSignal<urlListItem[]> = signal([]); //urlList needs to be writable, create an empty array
   urlAlreadyExists = signal(false); // Set value to check if url was previously added
   private urlListService = inject(UrlListService); // Inject service to access urlList and newUrl
+  numberOfUrls = signal(0); // Signal to track number of URLs
 
   constructor(private router: Router) {}
 
@@ -35,6 +37,8 @@ export class Overview {
     this.urlListService.getUrlList().forEach((item) => { // Populate urlList if there are items saved in localStorage
       this.urlList.update((list) => [...list, item]);
     });
+
+    this.setNumberOfUrls();
   }
 
   // Test url is valid by checking protocol is valud and if HEAD can be fetched
@@ -55,29 +59,41 @@ export class Overview {
     }
   }
 
+  setNumberOfUrls() {
+    if (this.urlList().length > 0) {
+      this.numberOfUrls.set(this.urlList().length);
+    } else {
+      return;
+    }
+  }
+
+  updateUrlListService() {
+    this.urlListService.urlList = this.urlList();
+    this.urlListService.newUrl = this.newUrl();
+
+    localStorage.setItem('newUrl', JSON.stringify(this.newUrl()));
+    localStorage.setItem('urlList', JSON.stringify(this.urlList()));
+  }
+
   // Handle form submission... add new url and update the list, save to localStorage
   async handleSubmit(addedUrl: string) {
     let myuuid = uuidv4();
-    this.newUrl.set({ url: addedUrl, id: myuuid });
+    this.newUrl.set({ url: addedUrl, id: myuuid }); // set personal key for each list item
     let currentList = [...this.urlList()];
 
     let checkUrlPreviouslyAdded = currentList.some((obj) => obj.url === addedUrl);
     if (addedUrl && (await this.checkUrlWorks(addedUrl))) {
       if (checkUrlPreviouslyAdded) {
-        console.log('url already exists');
+        alert('url already exists');
         this.urlAlreadyExists.set(true);
         return;
       } else {
         currentList.push(this.newUrl());
         this.urlList.set([...currentList]);
-
-        this.urlListService.urlList = this.urlList();
-        this.urlListService.newUrl = this.newUrl();
-
-        localStorage.setItem('newUrl', JSON.stringify(this.newUrl()));
-        localStorage.setItem('urlList', JSON.stringify(this.urlList()));
-        console.log('current list: ', this.urlList());
-        this.router.navigate(['/results']);
+        
+        this.updateUrlListService(); // update service with new url and list
+        this.setNumberOfUrls(); // update total number of urls for paginator
+        this.router.navigate(['/results']); // navigate to results page upon successful submission
       }
     }
   }
