@@ -1,5 +1,5 @@
 <app-layout>
-  <h1>Overview</h1>
+  <h1 class="h1">Overview</h1>
 
   <!-- Form field for adding fav url -->
   <app-form-wrapper>
@@ -8,13 +8,13 @@
 
   <!-- list of fav links -->
   <div class="list-wrapper">
-    <h2>My favorite links</h2>
+    <h2 class="h2">My favorite links</h2>
     <ul>
       @for (urlListItem of urlList().values(); track urlListItem.id) {
       <li>
         <div class="flex-row" matListItemContent>
           <span>{{ urlListItem.url }} </span>
-          <button matIconButton (click)="deleteUrl(urlListItem.id)">
+          <button matIconButton (click)="deleteUrl(urlListItem.id)" aria-label="Delete URL">
             <mat-icon>delete</mat-icon>
           </button>
         </div>

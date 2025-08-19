@@ -1,7 +1,7 @@
-main {
-  width: 100%;
+.main {
+  box-sizing: border-box;
   min-height: 100%;
   padding: 1rem;
-  box-sizing: border-box;
   position: relative;
+  width: 100%;
 }

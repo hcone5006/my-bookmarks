@@ -1,7 +1,8 @@
-h1 {
+.h1 {
   text-align: center;
 }
 
+// Style results to look tidy
 .results-wrapper {
   display: block;
   border: 1px solid var(--gray-400);
@@ -20,7 +21,7 @@ h1 {
   color: var(--gray-800);
 }
 
-code {
+.code {
   padding: 0.5rem;
   background-color: #d7d7d7;
 }
