@@ -18,3 +18,15 @@
   flex-direction: row;
   gap: 0.5rem;
 }
+
+.error-message {
+  color: rgb(186, 26, 26);
+}
+
+.spinner-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  margin-top: 2.5em;
+}

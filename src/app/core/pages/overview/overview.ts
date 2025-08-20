@@ -9,6 +9,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { UrlListService } from '@shared/services/urllistitem/urllistitem';
 import { Router } from '@angular/router';
 import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 export interface urlListItem {
   url: string;
@@ -25,6 +26,7 @@ export interface urlListItem {
     MatButtonModule,
     MatIconModule,
     MatPaginatorModule,
+    MatProgressSpinnerModule,
   ],
   templateUrl: './overview.html',
   styleUrl: './overview.scss',
@@ -37,6 +39,8 @@ export class Overview {
   numberOfUrls = signal(0); // Signal to track number of URLs
   pageIndex = signal(0); // Current page index for pagination
   pageSize = signal(20); // Number of items per page for pagination
+  loading = signal(false); // Loading state for the component
+  errorMessage = signal(''); // Error message for form validation
 
   // Set up computed signal that will show correct paginated items
   // todo: consider saving pagesize to localstorage so if the user changes the page size, it persists when they come back to the Overview page
@@ -71,6 +75,7 @@ export class Overview {
       });
       return true;
     } catch (error) {
+      this.errorMessage.set('URL validation failed: ' + error); // add error message next to form
       console.log('URL validation failed:', error);
       return false;
     }
@@ -94,24 +99,32 @@ export class Overview {
 
   // Handle form submission... add new url and update the list, save to localStorage
   async handleSubmit(addedUrl: string) {
-    let myuuid = uuidv4();
-    this.newUrl.set({ url: addedUrl, id: myuuid }); // set personal key for each list item
-    let currentList = [...this.urlList()];
+    this.loading.set(true); // Set loading state to true while processing
+    this.errorMessage.set(''); // clear error message
 
-    let checkUrlPreviouslyAdded = currentList.some((obj) => obj.url === addedUrl);
-    if (addedUrl && (await this.checkUrlWorks(addedUrl))) {
-      if (checkUrlPreviouslyAdded) {
-        alert('url already exists');
-        this.urlAlreadyExists.set(true);
-        return;
-      } else {
-        currentList.push(this.newUrl());
-        this.urlList.set([...currentList]);
+    try {
+      let myuuid = uuidv4();
+      this.newUrl.set({ url: addedUrl, id: myuuid }); // set personal key for each list item
+      let currentList = [...this.urlList()];
 
-        this.updateUrlListService(); // update service with new url and list
-        this.setNumberOfUrls(); // update total number of urls for paginator
-        this.router.navigate(['/results']); // navigate to results page upon successful submission
+      let checkUrlPreviouslyAdded = currentList.some((obj) => obj.url === addedUrl);
+
+      if (addedUrl && (await this.checkUrlWorks(addedUrl))) {
+        if (checkUrlPreviouslyAdded) {
+          this.errorMessage.set('This url has been previously added.'); // add error message if url already exists
+          this.urlAlreadyExists.set(true);
+          return;
+        } else {
+          currentList.push(this.newUrl());
+          this.urlList.set([...currentList]);
+
+          this.updateUrlListService(); // update service with new url and list
+          this.setNumberOfUrls(); // update total number of urls for paginator
+          this.router.navigate(['/results']); // navigate to results page upon successful submission
+        }
       }
+    } finally {
+      this.loading.set(false); // clear loading state
     }
   }
 

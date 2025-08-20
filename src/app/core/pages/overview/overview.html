@@ -1,37 +1,47 @@
 <app-layout>
   <h1 class="h1">Overview</h1>
 
-  <!-- Form field for adding fav url -->
-  <app-form-wrapper>
-    <app-form (currentURLEvent)="handleSubmit($event)" />
-  </app-form-wrapper>
+  @if (loading()) {
+    <div class="spinner-wrapper">
+      <mat-spinner></mat-spinner>
+    </div>
+  } @else {
+    <!-- Form field for adding fav url -->
+    <app-form-wrapper>
+      <!-- for accessibility, it's helpful to add the error message before form field -->
+      <p class="error-message">{{errorMessage()}}</p>
+      <app-form (currentURLEvent)="handleSubmit($event)" />
+    </app-form-wrapper>
 
-  <!-- list of fav links -->
-  <div class="list-wrapper">
-    <h2 class="h2">My favorite links</h2>
-    <ul>
-      <!-- update to show paginated list items -->
-      @for (urlListItem of paginatedUrls().values(); track urlListItem.id) {
-      <li>
-        <div class="flex-row" matListItemContent>
-          <span>{{ urlListItem.url }} </span>
-          <button matIconButton (click)="deleteUrl(urlListItem.id)" aria-label="Delete URL">
-            <mat-icon>delete</mat-icon>
-          </button>
-        </div>
-      </li>
-      } @empty {
-      <li>No items to display.</li>
-      }
-    </ul>
-    <!-- pagination set to show 20 list items at a time -->
-    <mat-paginator
-      [length]="numberOfUrls()"
-      [pageSize]="20"
-      [pageSizeOptions]="[5, 10, 20, 100]"
-      aria-label="Select page"
-      (page)="onPageChange($event)"
-    >
-    </mat-paginator>
-  </div>
+    <!-- list of fav links -->
+    <div class="list-wrapper">
+      <h2 class="h2">My favorite links</h2>
+      <ul>
+        <!-- update to show paginated list items -->
+        @for (urlListItem of paginatedUrls().values(); track urlListItem.id) {
+        <li>
+          <div class="flex-row" matListItemContent>
+            <span>{{ urlListItem.url }} </span>
+            <button matIconButton (click)="deleteUrl(urlListItem.id)" aria-label="Delete URL">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+        </li>
+        } @empty {
+        <li>No items to display.</li>
+        }
+      </ul>
+      
+      <!-- pagination set to show 20 list items at a time -->
+      <mat-paginator
+        [length]="numberOfUrls()"
+        [pageSize]="20"
+        [pageSizeOptions]="[5, 10, 20, 100]"
+        aria-label="Select page"
+        (page)="onPageChange($event)"
+      >
+      </mat-paginator>
+    </div>
+  }
+
 </app-layout>
