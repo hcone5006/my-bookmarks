@@ -4,7 +4,7 @@
 
 // Style list of fav links
 .list-wrapper {
-  max-width: 300px;
+  max-width: 600px;
   margin: 0 auto;
 
   .h2 {
@@ -12,11 +12,22 @@
   }
 }
 
+.list {
+  padding: 0;
+}
+
 .flex-row {
   align-items: center;
+  justify-content: space-between;
   display: flex;
   flex-direction: row;
   gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  overflow-wrap: break-word;
+
+  &:nth-child(odd) {
+    background-color: rgb(223, 239, 255);
+  }
 }
 
 .error-message {
