@@ -26,7 +26,7 @@ export class Form {
   favUrlForm = new FormGroup({
     favUrl: new FormControl('', [
       Validators.required,
-      Validators.pattern('(https?://)?([\\da-z.-]+)\\.([a-z.]{2,6})[/\\w .-]*/?'),
+      Validators.pattern('(https?://)?([\\da-z.-]+)\\.([a-z.]{2,6})([/\\w .-]*)*/?([?][;&a-z\\d%_.~+=-]*)?'),
     ]),
   });
 
