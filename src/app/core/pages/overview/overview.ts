@@ -135,6 +135,7 @@ export class Overview {
     if (id) {
       currentList = currentList.filter((item) => item.id !== id);
       this.urlList.set([...currentList]);
+      this.setNumberOfUrls();
     }
   }
 

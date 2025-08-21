@@ -21,7 +21,7 @@
       <!-- update to show paginated list items -->
       @for (urlListItem of paginatedUrls().values(); track urlListItem.id) {
       <li class="flex-row">
-        <span>{{ urlListItem.url }} </span>
+        <span><a [href]="urlListItem.url" target="_blank">{{ urlListItem.url }}</a></span>
         <button matIconButton (click)="deleteUrl(urlListItem.id)" aria-label="Delete URL">
           <mat-icon>delete</mat-icon>
         </button>
